@@ -11,7 +11,7 @@ import java.util.Set;
 @Data
 public class ItemDTO {
 
-
+    Long id;
     String type;
     String name;
     private Set<PermissionGroup> permissionGroups;

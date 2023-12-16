@@ -21,6 +21,6 @@ public class File {
     @Column(name = "ITEM_PERMISSION_GROUP_ID")
     Long permissionGroupId;
 
-    @OneToMany(cascade = {CascadeType.ALL}, mappedBy = "file")
+    @OneToMany(cascade = {CascadeType.ALL}, mappedBy = "file", fetch = FetchType.LAZY)
     List<Item> item = new ArrayList<>();
 }

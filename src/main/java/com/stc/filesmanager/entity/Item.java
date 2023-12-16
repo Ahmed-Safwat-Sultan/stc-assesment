@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Objects;
 import java.util.Set;
 
 @Entity
@@ -33,11 +34,14 @@ public class Item {
     )
     private Set<PermissionGroup> permissionGroups;
 
-    @ManyToOne
+    @ManyToOne()
     @JoinColumn(name = "parent_item_id")
     private Item parentItem;
 
-    @ManyToOne()
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn(name = "file_id")
     private File file;
+
+
 
 }

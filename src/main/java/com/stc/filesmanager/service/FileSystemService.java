@@ -80,6 +80,7 @@ public class FileSystemService {
         Item item = new Item();
         item.setName(fileName);
         item.setParentItem(parentItem);
+        item.setType("FILE");
 
         var group = getAdminGroup();
         var permissionGroupSet = new HashSet<PermissionGroup>();
@@ -91,12 +92,12 @@ public class FileSystemService {
         }
 
         File newFile = new File();
-        var items = new ArrayList<Item>();
-        items.add(item);
-        newFile.setItem(items);
-        newFile.setContent(file.getBytes());
 
-        filesRepository.save(newFile);
+        newFile.setContent(file.getBytes());
+        newFile.setPermissionGroupId(group.getId());
+        item.setFile(newFile);
+
+        itemRepository.save(item);
     }
 
     public Item findItemByName(String fileName) throws NoItemFoundException {
@@ -142,5 +143,15 @@ public class FileSystemService {
         if(group == null)
             throw new RuntimeException("admin group is not configured");
         return group;
+    }
+
+
+    public byte[] findFileContentById(Long id) throws NoItemFoundException {
+        Item item = itemRepository.findById(id).get();
+        if(item == null)
+            throw new NoItemFoundException("This item cannot be found");
+        if(!item.getType().equals("FILE"))
+            throw new RuntimeException("This item is not a file");
+        return item.getFile().getContent();
     }
 }

@@ -12,7 +12,9 @@ import com.stc.filesmanager.model.*;
 import com.stc.filesmanager.service.FileSystemService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -63,6 +65,25 @@ public class FileSystemController {
                 .map(permissionGroup -> modelMapper.map(permissionGroup, PermissionGroupDTO.class))
                 .collect(Collectors.toSet());
         return new ResponseEntity<>(permissionGroupDTO, HttpStatus.OK);
+    }
+
+
+    @GetMapping("/file/download/{fileId}")
+    public ResponseEntity<byte[]> downloadFile(@PathVariable Long fileId) throws NoItemFoundException {
+        byte[] fileData = fileSystemService.findFileContentById(fileId);
+
+        if (fileData != null) {
+            HttpHeaders headers = new HttpHeaders();
+            headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=file_" + fileId);
+            headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_OCTET_STREAM_VALUE);
+
+            return ResponseEntity.ok()
+                    .headers(headers)
+                    .contentLength(fileData.length)
+                    .body(fileData);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
 
