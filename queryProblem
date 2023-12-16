@@ -1,0 +1,6 @@
+SELECT ut.user_id, U.username, training_date,training_id, count(*)
+FROM user_training ut
+LEFT JOIN "User" U on ut.user_id = U.user_id
+GROUP BY training_id,training_date, ut.user_id, username
+HAVING count(ut.user_id) > 1
+ORDER BY training_date desc ;
